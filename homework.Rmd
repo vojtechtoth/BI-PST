@@ -1,0 +1,47 @@
+---
+title: "Délka humeru podle přežití vrabců"
+author: "Vojtěch Tóth, Cuphead, Mugman"
+date: "2022-12-08"
+output: html_document
+---
+
+```{r}
+  K = 4
+  L = 4
+  M = ((K+L)*47)%%11+1.
+```
+
+```{r echo=FALSE}
+  M
+```
+
+> Načtěte datový soubor a rozdělte sledovanou proměnnou na příslušné dvě pozorované skupiny. Stručně popište data a zkoumaný problém. Pro každu skupinu zvlášť odhadněte střední hodnotu, rozptyl a medián příslušného rozdělení.
+
+Dataset, který budeme v tomto úkolu zpracovávat, je case0201. Tento dataset obsahuje 59 záznamů dvou proměnných
+
+* Humerus - délka kosti pažní vrabců (v palcích)
+* Status - zda vrabec přežil("survived"), či zahynul("Perished")
+
+Data nasbíral H. Bumpus. Zkoumal, zda uhynulí vrabci postrádají některé fyzické vlastnosti oproti těm, kteří přežili a tím chtěl podpořit teorii přirozeného výběru. 
+
+Proměnnou Humerus rozdělíme do dvou skupin podle stavu a spočítáme odhady.
+```{r }
+  library(Sleuth2)
+  perished <- subset(case0201, Status=="Perished")$Humerus
+  survived <- subset(case0201, Status=="Survived")$Humerus
+
+  mean_per <- mean(perished)
+  var_per <- var(perished)
+  med_per <- median(perished)
+  
+  mean_sur <- mean(survived)
+  var_sur <- var(survived)
+  med_sur <- median(survived)
+```
+
+
+|| Přeživší  | Uhynulí    |
+|:--|:--:|:--:|
+|Výběrový průměr $$\bar{X}_n = \frac{1}{n}\sum^{n}_{i=1}{X_i}$$  | `r mean_per`| `r mean_sur` |
+|Výběrový rozptyl $$s^2_n = \frac{1}{n-1}\sum^n_{i=1}{(X_i-\bar{X}_n)^2}$$     | `r var_per` | `r var_sur`  |
+|Medián                         | `r med_per` | `r med_sur`  |
