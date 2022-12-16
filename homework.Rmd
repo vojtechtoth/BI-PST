@@ -3,8 +3,8 @@ title: "Délka humeru podle přežití vrabců"
 author: "Vojtěch Tóth, Cuphead, Mugman"
 date: "2022-12-08"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 
@@ -15,53 +15,61 @@ output:
 ```
 
 ```{r echo=FALSE}
-  M
+M
 ```
 
 ## Úloha 1
 
-> (1) Načtěte datový soubor a rozdělte sledovanou proměnnou na příslušné dvě pozorované skupiny. Stručně popište data a zkoumaný problém. Pro každu skupinu zvlášť odhadněte střední hodnotu, rozptyl a medián příslušného rozdělení.
+> (1) Načtěte datový soubor a rozdělte sledovanou proměnnou na příslušné dvě 
+pozorované skupiny. Stručně popište data a zkoumaný problém. Pro každu skupinu 
+zvlášť odhadněte střední hodnotu, rozptyl a medián příslušného rozdělení.
 
-Dataset, který budeme v tomto úkolu zpracovávat, je case0201. Tento dataset obsahuje 59 záznamů dvou proměnných
+Dataset, který budeme v tomto úkolu zpracovávat, je case0201. Tento dataset 
+obsahuje 59 záznamů dvou proměnných
 
 * Humerus - délka kosti pažní vrabců (v palcích)
 * Status - zda vrabec přežil("survived"), či zahynul("Perished")
 
-Data nasbíral H. Bumpus. Zkoumal, zda uhynulí vrabci postrádají některé fyzické vlastnosti oproti těm, kteří přežili a tím chtěl podpořit teorii přirozeného výběru. 
+Data nasbíral H. Bumpus. Zkoumal, zda uhynulí vrabci postrádají některé fyzické 
+vlastnosti oproti těm, kteří přežili a tím chtěl podpořit teorii přirozeného výběru. 
 
 Proměnnou Humerus rozdělíme do dvou skupin podle stavu.
 
 ```{r}
-  library(Sleuth2)
-  perished <- subset(case0201, Status=="Perished")$Humerus
-  survived <- subset(case0201, Status=="Survived")$Humerus
+library(Sleuth2)
+perished <- subset(case0201, Status=="Perished")$Humerus
+survived <- subset(case0201, Status=="Survived")$Humerus
 ```
 
 Ve skupině Uhynulích máme 24 hodnot, ve skupině přeživších 35.
 
 ```{r}
-  str(perished)
-  str(survived)
+str(perished)
+str(survived)
 ```
 
 Vzorce pro výběrový průměr, rozptyl a pro medián jsou popořadě
 $$\bar{X}_n = \frac{1}{n}\sum^{n}_{i=1}{X_i}$$,
 $$s^2_n = \frac{1}{n-1}\sum^n_{i=1}{(X_i-\bar{X}_n)^2}$$,
-$$ \text{med}(X) = \begin{cases}
-  a_{\lfloor \frac{n}{2} \rfloor}         & \text{pokud } n\%2=1 \\ 
-  \frac{a_{\lfloor \frac{n}{2} \rfloor} + a_{\lceil \frac{n}{2} \rceil} }{2} &\text{pokud }n\%2=0 \\ 
-    \end{cases} $$,
+$$ \text{med}(X) = 
+  \begin{cases}
+    a_{\lfloor \frac{n}{2} \rfloor}         & \text{pokud } n\%2=1 \\ 
+    \frac{a_{\lfloor \frac{n}{2} \rfloor} + a_{\lceil \frac{n}{2} \rceil} }{2} 
+    &\text{pokud }n\%2=0 \\ 
+  \end{cases} $$,
+
 my použijeme následující funkce.
 
 ```{r }
-  mean_per <- mean(perished)
-  var_per <- var(perished)
-  med_per <- median(perished)
+mean_per <- mean(perished)
+var_per <- var(perished)
+med_per <- median(perished)
   
-  mean_sur <- mean(survived)
-  var_sur <- var(survived)
-  med_sur <- median(survived)
+mean_sur <- mean(survived)
+var_sur <- var(survived)
+med_sur <- median(survived)
 ```
+
 Výsledné hodnoty jsou v této tabulce.
 
 |                 | Přeživší    | Uhynulí      |
@@ -72,25 +80,32 @@ Výsledné hodnoty jsou v této tabulce.
 
 ## Úloha 2
 
->(1b) Pro každou skupinu zvlášť odhadněte hustotu a distribuční funkci pomocí histogramu a empirické distribuční funkce.
+>(1b) Pro každou skupinu zvlášť odhadněte hustotu a distribuční funkci pomocí 
+histogramu a empirické distribuční funkce.
 
 Empirická distribuční funkce je definována jako 
 
 $$ F_n(x)=F_n(x, X_1,...,X_n)=\frac{1}{n}\sum^{n}_{i=1}{
   1\!\!1_{\left \{ x_i\leq x \right \} } }$$
   
-Tedy pro reálnou proměnnou $x$ zjistíme počet hodnot $x_i$, které jsou menší nebo rovny $x$ a podělíme je počtem všech záznamů $n$ dané skupiny. V jazyce R se pro výpočet hodnot používá funkce ecdf, výstup vykreslí funkce plot.  
+Tedy pro reálnou proměnnou $x$ zjistíme počet hodnot $x_i$, které jsou menší nebo 
+rovny $x$ a podělíme je počtem všech záznamů $n$ dané skupiny. V jazyce R se pro 
+výpočet hodnot používá funkce ecdf, výstup vykreslí funkce plot.  
 
-Histogram je sloupcový graf, kde každý sloupec má zvolenou nějakou vhodnou šířku. Výška daných sloupců se získá ze vztahu
+Histogram je sloupcový graf, kde každý sloupec má zvolenou nějakou vhodnou šířku. 
+Výška daných sloupců se získá ze vztahu
+
 $$\frac{m_i}{n\cdot h} =
-\frac{\text{počet hodnot uvnitř sloupce}}{\text{počet všech hodnot}\cdot\text{šířka sloupce}} $$
-Funkce hist z daných hodnot zvládne odhadnout nejlepší šířku sloupce a rovnou histogram vykreslí.
+\frac{\text{počet hodnot uvnitř sloupce}}
+    {\text{počet všech hodnot}\cdot\text{šířka sloupce}} $$
+Funkce hist z daných hodnot zvládne odhadnout nejlepší šířku sloupce a rovnou 
+histogram vykreslí.
 
 ### Empirická distribuční funkce a histogram skupiny uhynulích
 
 ```{r}
-  plot(ecdf(perished), main = "Empirická distribuční funkce délky humeru uhynulích vrabců")
-  hist(perished, main = "Histogram délky humeru uhynulých vrabců" )
+plot(ecdf(perished), main = "Empirická distribuční funkce délky humeru uhynulích vrabců")
+hist(perished, freq = FALSE, main = "Histogram délky humeru uhynulých vrabců" )
 ```
 
 Lze tvrdit, že délka humeru uhynulých vrabců se řídí normálním rozdělením.  
@@ -98,29 +113,99 @@ Lze tvrdit, že délka humeru uhynulých vrabců se řídí normálním rozděle
 ### Empirická distribuční funkce a histogram skupiny přeživších
 
 ```{r}
-  plot(ecdf(survived), main = "Empirická distribuční funkce délky humeru přeživších vrabců")
-hist(survived, main = "Histogram délky humeru přeživších vrabců")
+plot(ecdf(survived), main = "Empirická distribuční funkce délky humeru přeživších vrabců")
+hist(survived, freq = FALSE, main = "Histogram délky humeru přeživších vrabců")
 ```
 
 Lze tvrdit, že i délka humeru přeživších vrabců se řídí normálním rozdělením.  
 
 ## Úloha 3
 
-> (3b) Pro každou skupinu zvlášť najděte nejbližší rozdělení: Odhadněte parametry normálního, exponenciálního a rovnoměrného rozdělení. Zaneste příslušné hustoty s odhadnutými parametry do grafů histogramu. Diskutujte, které z rozdělení odpovídá pozorovaným datům nejlépe.
+> (3b) Pro každou skupinu zvlášť najděte nejbližší rozdělení: Odhadněte parametry 
+normálního, exponenciálního a rovnoměrného rozdělení. Zaneste příslušné hustoty s 
+odhadnutými parametry do grafů histogramu. Diskutujte, které z rozdělení odpovídá 
+pozorovaným datům nejlépe.
 
+Pro odhad parametrů lze použít balíček `EnvStats`.  
+
+### Normální rozdělení
+
+### Exponenciální rozdělení
+
+### Rovnoměrné rozdělení
+
+Rovnoměrné rozdělení je takové rozdělnení, které má v nějakém intervalu $(a,b)$ 
+konstatní pravděpodobnost, mimo něj je pravděpodobnost rovna 0. Pro hustotu platí
+
+$$ f_n(x) = \begin{cases}
+  \frac{1}{b-a} & \text{pro } x\in (a,b) \\
+  0             & \text{pro } x\not\in (a,b)    \end{cases}$$
+  
+Hledáme tedy odhad parametrů $a$ a $b$. Použijeme funkci `eunif` u které zvolíme 
+momentovou metodu. Získané parametry jsou prvky pole parameters, $a$ na indexu 1, 
+$b$ na indexu 2.
+
+```{r results='hide'}
+library(EnvStats, warn.conflicts=F, quietly=T)
+unif_perished <- eunif( perished, method="mme")$parameters
+unif_survived <- eunif( survived, method="mme")$parameters
+
+a_per <- unif_perished[1]
+b_per <- unif_perished[2]
+
+a_sur <- unif_survived[1]
+b_sur <- unif_survived[2]
+```
+
+Výsledné odhady:  
+
+|   | Přeživší  | Uhynulí   |
+|:--|:---------:|:---------:|
+| a | `r a_sur` | `r a_per` |
+| b | `r b_sur` | `r b_per` |
+
+
+
+```{r}
+hist(survived, freq = FALSE, main = "Histogram délky humeru přeživších vrabců")
+min <- 680
+max <- 780
+x <- c( min, a_sur, a_sur, b_sur, b_sur, max )
+p <- dunif(a_sur, min=a_sur, max=b_sur)
+y <- c( 0, 0, p, p, 0, 0)
+lines(x, y, col="red", lwd=3)
+```
+
+```{r}
+min <- 640
+max <- 780
+hist(perished, freq = FALSE, main = "Histogram délky humeru umrlých vrabců")
+x <- c( min , a_per, a_per, b_per, b_per, max )
+p <- dunif(a_per, min=a_per, max=b_per)
+y <- c(0, 0, p, p, 0, 0 )
+lines(x, y, col="red", lwd=3)
+```
 
 ## Úloha 4
 
-> (1b) Pro každou skupinu zvlášť vygenerujte náhodný výběr o 100 hodnotách z rozdělení, které jste zvolili jako nejbližší, s parametry odhadnutými v předchozím bodě. Porovnejte histogram simulovaných hodnot s pozorovanými daty.
+> (1b) Pro každou skupinu zvlášť vygenerujte náhodný výběr o 100 hodnotách z 
+rozdělení, které jste zvolili jako nejbližší, s parametry odhadnutými v předchozím 
+bodě. Porovnejte histogram simulovaných hodnot s pozorovanými daty.
 
 ## Úloha 5
 
-> (1b) Pro každou skupinu zvlášť spočítejte oboustranný 95% konfidenční interval pro střední hodnotu.
+> (1b) Pro každou skupinu zvlášť spočítejte oboustranný 95% konfidenční interval 
+pro střední hodnotu.
 
 ## Úloha 6
 
-> (1b) Pro každou skupinu zvlášť otestujte na hladině významnosti 5 % hypotézu, zda je střední hodnota rovná hodnotě K (parametr úlohy), proti oboustranné alternativě. Můžete použít buď výsledek z předešlého bodu, nebo výstup z příslušné vestavěné funkce vašeho softwaru.
+> (1b) Pro každou skupinu zvlášť otestujte na hladině významnosti 5 % hypotézu, 
+zda je střední hodnota rovná hodnotě K (parametr úlohy), proti oboustranné alternativě. 
+Můžete použít buď výsledek z předešlého bodu, nebo výstup z příslušné vestavěné 
+funkce vašeho softwaru.
 
 ## Úloha 7
 
->(2b) Na hladině významnosti 5 % otestujte, jestli mají pozorované skupiny stejnou střední hodnotu. Typ testu a alternativy stanovte tak, aby vaše volba nejlépe korespondovala s povahou zkoumaného problému.
+>(2b) Na hladině významnosti 5 % otestujte, jestli mají pozorované skupiny stejnou 
+střední hodnotu. Typ testu a alternativy stanovte tak, aby vaše volba nejlépe 
+korespondovala s povahou zkoumaného problému.
