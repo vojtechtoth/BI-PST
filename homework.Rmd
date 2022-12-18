@@ -5,8 +5,10 @@ date: "2022-12-08"
 output:
   html_document: default
   pdf_document: default
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
-
 
 ```{r}
   K = 4
@@ -20,18 +22,20 @@ M
 
 ## Úloha 1
 
-> (1) Načtěte datový soubor a rozdělte sledovanou proměnnou na příslušné dvě 
-pozorované skupiny. Stručně popište data a zkoumaný problém. Pro každu skupinu 
-zvlášť odhadněte střední hodnotu, rozptyl a medián příslušného rozdělení.
+> (1) Načtěte datový soubor a rozdělte sledovanou proměnnou na příslušné
+>     dvě pozorované skupiny. Stručně popište data a zkoumaný problém.
+>     Pro každu skupinu zvlášť odhadněte střední hodnotu, rozptyl a
+>     medián příslušného rozdělení.
 
-Dataset, který budeme v tomto úkolu zpracovávat, je case0201. Tento dataset 
-obsahuje 59 záznamů dvou proměnných
+Dataset, který budeme v tomto úkolu zpracovávat, je case0201. Tento
+dataset obsahuje 59 záznamů dvou proměnných
 
-* Humerus - délka kosti pažní vrabců (v palcích)
-* Status - zda vrabec přežil("survived"), či zahynul("Perished")
+-   Humerus - délka kosti pažní vrabců (v palcích)
+-   Status - zda vrabec přežil("survived"), či zahynul("Perished")
 
-Data nasbíral H. Bumpus. Zkoumal, zda uhynulí vrabci postrádají některé fyzické 
-vlastnosti oproti těm, kteří přežili a tím chtěl podpořit teorii přirozeného výběru. 
+Data nasbíral H. Bumpus. Zkoumal, zda uhynulí vrabci postrádají některé
+fyzické vlastnosti oproti těm, kteří přežili a tím chtěl podpořit teorii
+přirozeného výběru.
 
 Proměnnou Humerus rozdělíme do dvou skupin podle stavu.
 
@@ -72,33 +76,34 @@ med_sur <- median(survived)
 
 Výsledné hodnoty jsou v této tabulce.
 
-|                 | Přeživší    | Uhynulí      |
-|:----------------|:-----------:|:------------:|
-|Výběrový průměr  | `r mean_per`| `r mean_sur` |
-|Výběrový rozptyl | `r var_per` | `r var_sur`  |
-|Medián           | `r med_per` | `r med_sur`  |
+|                  |   Přeživší   |   Uhynulí    |
+|:-----------------|:------------:|:------------:|
+| Výběrový průměr  | `r mean_per` | `r mean_sur` |
+| Výběrový rozptyl | `r var_per`  | `r var_sur`  |
+| Medián           | `r med_per`  | `r med_sur`  |
 
 ## Úloha 2
 
->(1b) Pro každou skupinu zvlášť odhadněte hustotu a distribuční funkci pomocí 
-histogramu a empirické distribuční funkce.
+> (1b) Pro každou skupinu zvlášť odhadněte hustotu a distribuční funkci
+> pomocí histogramu a empirické distribuční funkce.
 
-Empirická distribuční funkce je definována jako 
+Empirická distribuční funkce je definována jako
 
 $$ F_n(x)=F_n(x, X_1,...,X_n)=\frac{1}{n}\sum^{n}_{i=1}{
   1\!\!1_{\left \{ x_i\leq x \right \} } }$$
-  
-Tedy pro reálnou proměnnou $x$ zjistíme počet hodnot $x_i$, které jsou menší nebo 
-rovny $x$ a podělíme je počtem všech záznamů $n$ dané skupiny. V jazyce R se pro 
-výpočet hodnot používá funkce ecdf, výstup vykreslí funkce plot.  
 
-Histogram je sloupcový graf, kde každý sloupec má zvolenou nějakou vhodnou šířku. 
-Výška daných sloupců se získá ze vztahu
+Tedy pro reálnou proměnnou $x$ zjistíme počet hodnot $x_i$, které jsou
+menší nebo rovny $x$ a podělíme je počtem všech záznamů $n$ dané
+skupiny. V jazyce R se pro výpočet hodnot používá funkce ecdf, výstup
+vykreslí funkce plot.
+
+Histogram je sloupcový graf, kde každý sloupec má zvolenou nějakou
+vhodnou šířku. Výška daných sloupců se získá ze vztahu
 
 $$\frac{m_i}{n\cdot h} =
 \frac{\text{počet hodnot uvnitř sloupce}}
-    {\text{počet všech hodnot}\cdot\text{šířka sloupce}} $$
-Funkce hist z daných hodnot zvládne odhadnout nejlepší šířku sloupce a rovnou 
+    {\text{počet všech hodnot}\cdot\text{šířka sloupce}} $$ Funkce hist
+z daných hodnot zvládne odhadnout nejlepší šířku sloupce a rovnou
 histogram vykreslí.
 
 ### Empirická distribuční funkce a histogram skupiny uhynulích
@@ -108,7 +113,8 @@ plot(ecdf(perished), main = "Empirická distribuční funkce délky humeru uhynu
 hist(perished, freq = FALSE, main = "Histogram délky humeru uhynulých vrabců" )
 ```
 
-Lze tvrdit, že délka humeru uhynulých vrabců se řídí normálním rozdělením.  
+Lze tvrdit, že délka humeru uhynulých vrabců se řídí normálním
+rozdělením.
 
 ### Empirická distribuční funkce a histogram skupiny přeživších
 
@@ -117,16 +123,17 @@ plot(ecdf(survived), main = "Empirická distribuční funkce délky humeru pře�
 hist(survived, freq = FALSE, main = "Histogram délky humeru přeživších vrabců")
 ```
 
-Lze tvrdit, že i délka humeru přeživších vrabců se řídí normálním rozdělením.  
+Lze tvrdit, že i délka humeru přeživších vrabců se řídí normálním
+rozdělením.
 
 ## Úloha 3
 
-> (3b) Pro každou skupinu zvlášť najděte nejbližší rozdělení: Odhadněte parametry 
-normálního, exponenciálního a rovnoměrného rozdělení. Zaneste příslušné hustoty s 
-odhadnutými parametry do grafů histogramu. Diskutujte, které z rozdělení odpovídá 
-pozorovaným datům nejlépe.
+> (3b) Pro každou skupinu zvlášť najděte nejbližší rozdělení: Odhadněte
+> parametry normálního, exponenciálního a rovnoměrného rozdělení.
+> Zaneste příslušné hustoty s odhadnutými parametry do grafů histogramu.
+> Diskutujte, které z rozdělení odpovídá pozorovaným datům nejlépe.
 
-Pro odhad parametrů lze použít balíček `EnvStats`.  
+Pro odhad parametrů lze použít balíček `EnvStats`.
 
 ### Normální rozdělení
 
@@ -134,16 +141,17 @@ Pro odhad parametrů lze použít balíček `EnvStats`.
 
 ### Rovnoměrné rozdělení
 
-Rovnoměrné rozdělení je takové rozdělnení, které má v nějakém intervalu $(a,b)$ 
-konstatní pravděpodobnost, mimo něj je pravděpodobnost rovna 0. Pro hustotu platí
+Rovnoměrné rozdělení je takové rozdělnení, které má v nějakém intervalu
+$(a,b)$ konstatní pravděpodobnost, mimo něj je pravděpodobnost rovna 0.
+Pro hustotu platí
 
 $$ f_n(x) = \begin{cases}
   \frac{1}{b-a} & \text{pro } x\in (a,b) \\
   0             & \text{pro } x\not\in (a,b)    \end{cases}$$
-  
-Hledáme tedy odhad parametrů $a$ a $b$. Použijeme funkci `eunif` u které zvolíme 
-momentovou metodu. Získané parametry jsou prvky pole parameters, $a$ na indexu 1, 
-$b$ na indexu 2.
+
+Hledáme tedy odhad parametrů $a$ a $b$. Použijeme funkci `eunif` u které
+zvolíme momentovou metodu. Získané parametry jsou prvky pole parameters,
+$a$ na indexu 1, $b$ na indexu 2.
 
 ```{r results='hide'}
 library(EnvStats, warn.conflicts=F, quietly=T)
@@ -157,14 +165,12 @@ a_sur <- unif_survived[1]
 b_sur <- unif_survived[2]
 ```
 
-Výsledné odhady:  
+Výsledné odhady:
 
-|   | Přeživší  | Uhynulí   |
-|:--|:---------:|:---------:|
-| a | `r a_sur` | `r a_per` |
-| b | `r b_sur` | `r b_per` |
-
-
+|     | Přeživší  |  Uhynulí  |
+|:----|:---------:|:---------:|
+| a   | `r a_sur` | `r a_per` |
+| b   | `r b_sur` | `r b_per` |
 
 ```{r}
 hist(survived, freq = FALSE, main = "Histogram délky humeru přeživších vrabců")
@@ -188,24 +194,25 @@ lines(x, y, col="red", lwd=3)
 
 ## Úloha 4
 
-> (1b) Pro každou skupinu zvlášť vygenerujte náhodný výběr o 100 hodnotách z 
-rozdělení, které jste zvolili jako nejbližší, s parametry odhadnutými v předchozím 
-bodě. Porovnejte histogram simulovaných hodnot s pozorovanými daty.
+> (1b) Pro každou skupinu zvlášť vygenerujte náhodný výběr o 100
+> hodnotách z rozdělení, které jste zvolili jako nejbližší, s parametry
+> odhadnutými v předchozím bodě. Porovnejte histogram simulovaných
+> hodnot s pozorovanými daty.
 
 ## Úloha 5
 
-> (1b) Pro každou skupinu zvlášť spočítejte oboustranný 95% konfidenční interval 
-pro střední hodnotu.
+> (1b) Pro každou skupinu zvlášť spočítejte oboustranný 95% konfidenční
+> interval pro střední hodnotu.
 
 ## Úloha 6
 
-> (1b) Pro každou skupinu zvlášť otestujte na hladině významnosti 5 % hypotézu, 
-zda je střední hodnota rovná hodnotě K (parametr úlohy), proti oboustranné alternativě. 
-Můžete použít buď výsledek z předešlého bodu, nebo výstup z příslušné vestavěné 
-funkce vašeho softwaru.
+> (1b) Pro každou skupinu zvlášť otestujte na hladině významnosti 5 %
+> hypotézu, zda je střední hodnota rovná hodnotě K (parametr úlohy),
+> proti oboustranné alternativě. Můžete použít buď výsledek z předešlého
+> bodu, nebo výstup z příslušné vestavěné funkce vašeho softwaru.
 
 ## Úloha 7
 
->(2b) Na hladině významnosti 5 % otestujte, jestli mají pozorované skupiny stejnou 
-střední hodnotu. Typ testu a alternativy stanovte tak, aby vaše volba nejlépe 
-korespondovala s povahou zkoumaného problému.
+> (2b) Na hladině významnosti 5 % otestujte, jestli mají pozorované
+> skupiny stejnou střední hodnotu. Typ testu a alternativy stanovte tak,
+> aby vaše volba nejlépe korespondovala s povahou zkoumaného problému.
