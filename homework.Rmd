@@ -135,9 +135,41 @@ rozdělením.
 
 Pro odhad parametrů lze použít balíček `EnvStats`.
 
+```{r}
+library(EnvStats, warn.conflicts=F, quietly=T)
+```
+
 ### Normální rozdělení
 
 ### Exponenciální rozdělení
+
+Exponenciální rozdělení je takové rozdělení, při kterém události mají
+nezávislé exponenciální časy mezi sebou. Pro hustotu platí
+
+$$
+f_n(x) = \begin{cases}
+  {\lambda}e^{-\lambda x} & \text{pro } x\in (0,\infty) \\
+  0             & \text{jinde}    \end{cases}
+$$
+
+Hledáme tedy odhad parametru $\lambda$. Použijeme funkce `eexp`, u které
+zvolíme momentovou metodu a metodu maximální věrohodnosti. Získané
+parametry jsou prvky pole parameters, $\lambda$ na indexu 1.
+
+```{r results='hide'}
+library(EnvStats, warn.conflicts=F, quietly=T)
+exp_perished <- eexp(perished, method="mle/mme")$parameters
+exp_survived <- eexp(survived, method="mle/mme")$parameters
+
+lambda_per <- exp_perished[1]
+lambda_sur <- exp_survived[1]
+```
+
+Výsledné odhady:
+
+|           |    Přeživší    |    Uhynulí     |
+|:----------|:--------------:|:--------------:|
+| $\lambda$ | `r lambda_sur` | `r lambda_per` |
 
 ### Rovnoměrné rozdělení
 
@@ -154,7 +186,6 @@ zvolíme momentovou metodu. Získané parametry jsou prvky pole parameters,
 $a$ na indexu 1, $b$ na indexu 2.
 
 ```{r results='hide'}
-library(EnvStats, warn.conflicts=F, quietly=T)
 unif_perished <- eunif( perished, method="mme")$parameters
 unif_survived <- eunif( survived, method="mme")$parameters
 
@@ -173,23 +204,29 @@ Výsledné odhady:
 | b   | `r b_sur` | `r b_per` |
 
 ```{r}
-hist(survived, freq = FALSE, main = "Histogram délky humeru přeživších vrabců")
+hist(survived, freq = FALSE, main = "Histogram a odhady (survived)")
 min <- 680
 max <- 780
 x <- c( min, a_sur, a_sur, b_sur, b_sur, max )
 p <- dunif(a_sur, min=a_sur, max=b_sur)
 y <- c( 0, 0, p, p, 0, 0)
 lines(x, y, col="red", lwd=3)
+
+x <- survived
+curve(dexp(x, rate = lambda_sur), lwd= 3, col = "blue", add = TRUE)
 ```
 
 ```{r}
 min <- 640
 max <- 780
-hist(perished, freq = FALSE, main = "Histogram délky humeru umrlých vrabců")
+hist(perished, freq = FALSE, main = "Histogram a odhady (perished)")
 x <- c( min , a_per, a_per, b_per, b_per, max )
 p <- dunif(a_per, min=a_per, max=b_per)
 y <- c(0, 0, p, p, 0, 0 )
 lines(x, y, col="red", lwd=3)
+
+x <- perished
+curve(dexp(x, rate = lambda_per), lwd= 3, col = "blue", add = TRUE)
 ```
 
 ## Úloha 4
