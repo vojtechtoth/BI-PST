@@ -3,8 +3,8 @@ title: "Délka humeru podle přežití vrabců"
 author: "Vojtěch Tóth, Cuphead, Mugman"
 date: "2022-12-08"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 editor_options: 
   markdown: 
     wrap: 72
@@ -37,12 +37,16 @@ Data nasbíral H. Bumpus. Zkoumal, zda uhynulí vrabci postrádají některé
 fyzické vlastnosti oproti těm, kteří přežili a tím chtěl podpořit teorii
 přirozeného výběru.
 
-Proměnnou Humerus rozdělíme do dvou skupin podle stavu.
+Proměnnou Humerus rozdělíme do dvou skupin podle stavu a transformujeme, aby byly
+ve správných jednotkách.
 
 ```{r}
 library(Sleuth2)
 perished <- subset(case0201, Status=="Perished")$Humerus
 survived <- subset(case0201, Status=="Survived")$Humerus
+
+perished <- perished/1000 
+survived <- survived/1000 
 ```
 
 Ve skupině Uhynulích máme 24 hodnot, ve skupině přeživších 35.
@@ -51,6 +55,7 @@ Ve skupině Uhynulích máme 24 hodnot, ve skupině přeživších 35.
 str(perished)
 str(survived)
 ```
+
 
 Vzorce pro výběrový průměr, rozptyl a pro medián jsou popořadě
 $$\bar{X}_n = \frac{1}{n}\sum^{n}_{i=1}{X_i}$$,
@@ -157,7 +162,6 @@ zvolíme momentovou metodu a metodu maximální věrohodnosti. Získané
 parametry jsou prvky pole parameters, $\lambda$ na indexu 1.
 
 ```{r results='hide'}
-library(EnvStats, warn.conflicts=F, quietly=T)
 exp_perished <- eexp(perished, method="mle/mme")$parameters
 exp_survived <- eexp(survived, method="mle/mme")$parameters
 
@@ -173,7 +177,7 @@ Výsledné odhady:
 
 ### Rovnoměrné rozdělení
 
-Rovnoměrné rozdělení je takové rozdělnení, které má v nějakém intervalu
+Rovnoměrné rozdělení je takové rozdělení, které má v nějakém intervalu
 $(a,b)$ konstatní pravděpodobnost, mimo něj je pravděpodobnost rovna 0.
 Pro hustotu platí
 
@@ -205,8 +209,8 @@ Výsledné odhady:
 
 ```{r}
 hist(survived, freq = FALSE, main = "Histogram a odhady (survived)")
-min <- 680
-max <- 780
+min <- min(survived)
+max <- max(survived)
 x <- c( min, a_sur, a_sur, b_sur, b_sur, max )
 p <- dunif(a_sur, min=a_sur, max=b_sur)
 y <- c( 0, 0, p, p, 0, 0)
@@ -214,11 +218,13 @@ lines(x, y, col="red", lwd=3)
 
 x <- survived
 curve(dexp(x, rate = lambda_sur), lwd= 3, col = "blue", add = TRUE)
+
+curve(dnorm(x, mean = mean_sur, sd = sqrt(var_sur)), col="green", add = TRUE, lwd=3)
 ```
 
 ```{r}
-min <- 640
-max <- 780
+min <- min(perished)
+max <- max(perished)
 hist(perished, freq = FALSE, main = "Histogram a odhady (perished)")
 x <- c( min , a_per, a_per, b_per, b_per, max )
 p <- dunif(a_per, min=a_per, max=b_per)
@@ -227,6 +233,8 @@ lines(x, y, col="red", lwd=3)
 
 x <- perished
 curve(dexp(x, rate = lambda_per), lwd= 3, col = "blue", add = TRUE)
+
+curve(dnorm(x, mean = mean_per, sd = sqrt(var_per)), col="green", add = TRUE, lwd=3)
 ```
 
 ## Úloha 4
