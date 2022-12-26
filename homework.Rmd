@@ -30,23 +30,19 @@ M
 Dataset, který budeme v tomto úkolu zpracovávat, je case0201. Tento
 dataset obsahuje 59 záznamů dvou proměnných
 
--   Humerus - délka kosti pažní vrabců (v palcích)
+-   Humerus - délka kosti pažní vrabců (v mili-palcích)
 -   Status - zda vrabec přežil("survived"), či zahynul("Perished")
 
 Data nasbíral H. Bumpus. Zkoumal, zda uhynulí vrabci postrádají některé
 fyzické vlastnosti oproti těm, kteří přežili a tím chtěl podpořit teorii
 přirozeného výběru.
 
-Proměnnou Humerus rozdělíme do dvou skupin podle stavu a transformujeme, aby byly
-ve správných jednotkách.
+Proměnnou Humerus rozdělíme do dvou skupin podle stavu.
 
 ```{r}
 library(Sleuth2)
 perished <- subset(case0201, Status=="Perished")$Humerus
 survived <- subset(case0201, Status=="Survived")$Humerus
-
-perished <- perished/1000 
-survived <- survived/1000 
 ```
 
 Ve skupině Uhynulích máme 24 hodnot, ve skupině přeživších 35.
@@ -244,10 +240,44 @@ curve(dnorm(x, mean = mean_per, sd = sqrt(var_per)), col="green", add = TRUE, lw
 > odhadnutými v předchozím bodě. Porovnejte histogram simulovaných
 > hodnot s pozorovanými daty.
 
+```{r}
+data <- rnorm( 100, mean = mean_sur, sd=sqrt(var_sur))
+hist(survived, freq = FALSE, main = "Histogram skutečných a generovaných hodnot(survived)")
+hist(data, freq=FALSE, add=TRUE, col = rgb( 1, 0, 0, 0.4))
+```
+
+```{r}
+data <- rnorm( 100, mean = mean_per, sd=sqrt(var_per))
+hist(perished, freq = FALSE, main = "Histogram skutečných a generovaných hodnot (perished)")
+hist(data, freq=FALSE, add=TRUE, col = rgb( 0, 0, 1, 0.4))
+```
+
 ## Úloha 5
 
 > (1b) Pro každou skupinu zvlášť spočítejte oboustranný 95% konfidenční
 > interval pro střední hodnotu.
+
+
+```{r}
+model <- lm(survived ~ 1)
+interval <- confint(model, level=0.95)
+
+L_bound_sur = interval[1]
+U_bound_sur = interval[2]
+```
+
+```{r}
+model <- lm(perished ~ 1)
+interval <- confint(model, level=0.95)
+
+L_bound_per = interval[1]
+U_bound_per = interval[2]
+```
+
+|          | dolní mez       |  horní mez      |
+|:---------|:---------------:|:---------------:|
+| Přeživší | `r L_bound_sur` | `r U_bound_sur` |
+| Uhynulí  | `r L_bound_per` | `r U_bound_per` |
 
 ## Úloha 6
 
@@ -256,8 +286,28 @@ curve(dnorm(x, mean = mean_per, sd = sqrt(var_per)), col="green", add = TRUE, lw
 > proti oboustranné alternativě. Můžete použít buď výsledek z předešlého
 > bodu, nebo výstup z příslušné vestavěné funkce vašeho softwaru.
 
+```{r}
+t.test( survived, mu = K, conf.level = 0.95, alternative = "two.sided" )
+```
+
+```{r}
+t.test( perished, mu = K, conf.level = 0.95, alternative = "two.sided" )
+```
+
 ## Úloha 7
 
 > (2b) Na hladině významnosti 5 % otestujte, jestli mají pozorované
 > skupiny stejnou střední hodnotu. Typ testu a alternativy stanovte tak,
 > aby vaše volba nejlépe korespondovala s povahou zkoumaného problému.
+
+Použijeme oboustranný dvouvýběrový t-test.
+
+```{r}
+t.test( survived, perished, paired=FALSE, conf.level = 0.95, 
+        alternative = "two.sided", var.equal = TRUE )
+```
+Z výstupu funkce vidíme, že 95% konfidenční interval rozdílu středních hodnot 
+obou skupin je (-1.279386, 21.446053) a p-hodnota (Minimální hladina významnosti, 
+na které lze hypotézu $H_0$ při dané realizaci náhodného výběru zamítnout) rovná 
+0.0809 (8%). Hladina významnosti byla stanovena na 5%, rovnost středních hodnot 
+tedy nezamítáme.
