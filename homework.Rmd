@@ -52,7 +52,6 @@ str(perished)
 str(survived)
 ```
 
-
 Vzorce pro výběrový průměr, rozptyl a pro medián jsou popořadě
 $$\bar{X}_n = \frac{1}{n}\sum^{n}_{i=1}{X_i}$$,
 $$s^2_n = \frac{1}{n-1}\sum^n_{i=1}{(X_i-\bar{X}_n)^2}$$,
@@ -233,6 +232,18 @@ curve(dexp(x, rate = lambda_per), lwd= 3, col = "blue", add = TRUE)
 curve(dnorm(x, mean = mean_per, sd = sqrt(var_per)), col="green", add = TRUE, lwd=3)
 ```
 
+Z grafů vidíme, že žádný odhad neodpovídá přesně naším datům,
+pravděpodobně kvůli tomu, že máme relativně malý datový soubor. Nicméně,
+máme dost na to, abychom odhadovali, jaké rozdělení to by mohlo být.
+*Exponenciální rozdělení (modrá barva)* úplně neodpovídá žádnému
+histogramu. *Rovnoměrné rozdělení (červená barva)* mu odpovídá líp, ale
+kdyby data byly rozdělené rovnoměrně, sloupce v histogramech by museli
+být stejné výšky. My ale můžeme pozorovat to, že sloupce jsou nejvyšší
+uprostřed histogramů a jsou nejnižší na jejich okrajech. Takové výsledky
+nejlépe odpovídají *normálnímu rozdělení*, o čem nás také přesvědčuje
+graf normálního rozdělení *(zelená barva)*. **Tedy, ohdadujeme že
+nejbližší rodzělení pro nás je normální.**
+
 ## Úloha 4
 
 > (1b) Pro každou skupinu zvlášť vygenerujte náhodný výběr o 100
@@ -252,11 +263,14 @@ hist(perished, freq = FALSE, main = "Histogram skutečných a generovaných hodn
 hist(data, freq=FALSE, add=TRUE, col = rgb( 0, 0, 1, 0.4))
 ```
 
+Pro oba grafy platí, že histogram generovaných výšek více-méně odpovídá
+našemu zvolenému rozdělení, což svědči o tom, že volba normálního
+rozdělení pravděpodobně byla správnou.
+
 ## Úloha 5
 
 > (1b) Pro každou skupinu zvlášť spočítejte oboustranný 95% konfidenční
 > interval pro střední hodnotu.
-
 
 ```{r}
 model <- lm(survived ~ 1)
@@ -274,7 +288,7 @@ L_bound_per = interval[1]
 U_bound_per = interval[2]
 ```
 
-|          | dolní mez       |  horní mez      |
+|          |    dolní mez    |    horní mez    |
 |:---------|:---------------:|:---------------:|
 | Přeživší | `r L_bound_sur` | `r U_bound_sur` |
 | Uhynulí  | `r L_bound_per` | `r U_bound_per` |
@@ -306,8 +320,9 @@ Použijeme oboustranný dvouvýběrový t-test.
 t.test( survived, perished, paired=FALSE, conf.level = 0.95, 
         alternative = "two.sided", var.equal = TRUE )
 ```
-Z výstupu funkce vidíme, že 95% konfidenční interval rozdílu středních hodnot 
-obou skupin je (-1.279386, 21.446053) a p-hodnota (Minimální hladina významnosti, 
-na které lze hypotézu $H_0$ při dané realizaci náhodného výběru zamítnout) rovná 
-0.0809 (8%). Hladina významnosti byla stanovena na 5%, rovnost středních hodnot 
-tedy nezamítáme.
+
+Z výstupu funkce vidíme, že 95% konfidenční interval rozdílu středních
+hodnot obou skupin je (-1.279386, 21.446053) a p-hodnota (Minimální
+hladina významnosti, na které lze hypotézu $H_0$ při dané realizaci
+náhodného výběru zamítnout) rovná 0.0809 (8%). Hladina významnosti byla
+stanovena na 5%, rovnost středních hodnot tedy nezamítáme.
