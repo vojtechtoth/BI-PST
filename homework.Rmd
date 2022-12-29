@@ -17,7 +17,7 @@ editor_options:
 ```
 
 ```{r echo=FALSE}
-M
+print(paste("M =", M))
 ```
 
 ## Úloha 1
@@ -27,11 +27,11 @@ M
 >     Pro každu skupinu zvlášť odhadněte střední hodnotu, rozptyl a
 >     medián příslušného rozdělení.
 
-Dataset, který budeme v tomto úkolu zpracovávat, je case0201. Tento
+Dataset, který budeme v tomto úkolu zpracovávat, je **case0201**. Tento
 dataset obsahuje 59 záznamů dvou proměnných
 
--   Humerus - délka kosti pažní vrabců (v mili-palcích)
--   Status - zda vrabec přežil("survived"), či zahynul("Perished")
+-   **Humerus** - délka kosti pažní vrabců (v mili-palcích)
+-   **Status** - zda vrabec přežil("survived"), či zahynul("Perished")
 
 Data nasbíral H. Bumpus. Zkoumal, zda uhynulí vrabci postrádají některé
 fyzické vlastnosti oproti těm, kteří přežili a tím chtěl podpořit teorii
@@ -45,7 +45,7 @@ perished <- subset(case0201, Status=="Perished")$Humerus
 survived <- subset(case0201, Status=="Survived")$Humerus
 ```
 
-Ve skupině Uhynulích máme 24 hodnot, ve skupině přeživších 35.
+Ve skupině Uhynulých máme `r length(perished)` hodnot, ve skupině přeživších `r length(survived)`.
 
 ```{r}
 str(perished)
@@ -76,7 +76,7 @@ med_sur <- median(survived)
 
 Výsledné hodnoty jsou v této tabulce.
 
-|                  |   Přeživší   |   Uhynulí    |
+|                  |   Uhynulí    |   Přeživší   |
 |:-----------------|:------------:|:------------:|
 | Výběrový průměr  | `r mean_per` | `r mean_sur` |
 | Výběrový rozptyl | `r var_per`  | `r var_sur`  |
@@ -87,7 +87,7 @@ Výsledné hodnoty jsou v této tabulce.
 > (1b) Pro každou skupinu zvlášť odhadněte hustotu a distribuční funkci
 > pomocí histogramu a empirické distribuční funkce.
 
-Empirická distribuční funkce je definována jako
+**Empirická distribuční funkce** je definována jako
 
 $$ F_n(x)=F_n(x, X_1,...,X_n)=\frac{1}{n}\sum^{n}_{i=1}{
   1\!\!1_{\left \{ x_i\leq x \right \} } }$$
@@ -97,14 +97,16 @@ menší nebo rovny $x$ a podělíme je počtem všech záznamů $n$ dané
 skupiny. V jazyce R se pro výpočet hodnot používá funkce ecdf, výstup
 vykreslí funkce plot.
 
-Histogram je sloupcový graf, kde každý sloupec má zvolenou nějakou
+**Histogram** je sloupcový graf, kde každý sloupec má zvolenou nějakou
 vhodnou šířku. Výška daných sloupců se získá ze vztahu
 
 $$\frac{m_i}{n\cdot h} =
 \frac{\text{počet hodnot uvnitř sloupce}}
     {\text{počet všech hodnot}\cdot\text{šířka sloupce}} $$ Funkce hist
 z daných hodnot zvládne odhadnout nejlepší šířku sloupce a rovnou
-histogram vykreslí.
+histogram vykreslí. Aby histogram byl normalizovaný (součet výšek byl roven 1) 
+a nabýval obdobných hodnot jako hustota, musí být parametr `freq` nastaven 
+na `FALSE`.
 
 ### Empirická distribuční funkce a histogram skupiny uhynulích
 
@@ -113,7 +115,7 @@ plot(ecdf(perished), main = "Empirická distribuční funkce délky humeru uhynu
 hist(perished, freq = FALSE, main = "Histogram délky humeru uhynulých vrabců" )
 ```
 
-Lze tvrdit, že délka humeru uhynulých vrabců se řídí normálním
+Lze tvrdit, že délka humeru *uhynulých* vrabců se řídí normálním
 rozdělením.
 
 ### Empirická distribuční funkce a histogram skupiny přeživších
@@ -123,7 +125,7 @@ plot(ecdf(survived), main = "Empirická distribuční funkce délky humeru pře�
 hist(survived, freq = FALSE, main = "Histogram délky humeru přeživších vrabců")
 ```
 
-Lze tvrdit, že i délka humeru přeživších vrabců se řídí normálním
+Lze tvrdit, že i délka humeru *přeživších* vrabců se řídí normálním
 rozdělením.
 
 ## Úloha 3
@@ -251,6 +253,11 @@ nejbližší rodzělení pro nás je normální.**
 > odhadnutými v předchozím bodě. Porovnejte histogram simulovaných
 > hodnot s pozorovanými daty.
 
+Pro vygenerování n náhodných hodnot při daném rozdělení využijeme opět balíčku 
+`EnvStats`. Zvolili jsme normální rozdělení, proto použijeme funkci `rnorm`. Jako
+parametry zadáme počet generovaných hodnot, už dříve odhadnutý výběrový průměr a 
+druhou odmocninu výběrového rozptylu (zde místo výběrové směrodatné odchylky).
+
 ```{r}
 data <- rnorm( 100, mean = mean_sur, sd=sqrt(var_sur))
 hist(survived, freq = FALSE, main = "Histogram skutečných a generovaných hodnot(survived)")
@@ -264,7 +271,7 @@ hist(data, freq=FALSE, add=TRUE, col = rgb( 0, 0, 1, 0.4))
 ```
 
 Pro oba grafy platí, že histogram generovaných výšek více-méně odpovídá
-našemu zvolenému rozdělení, což svědči o tom, že volba normálního
+našemu zvolenému rozdělení, což svědčí o tom, že volba normálního
 rozdělení pravděpodobně byla správnou.
 
 ## Úloha 5
