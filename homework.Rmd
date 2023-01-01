@@ -1,6 +1,6 @@
 ---
 title: "Délka humeru podle přežití vrabců"
-author: "Vojtěch Tóth, Cuphead, Mugman"
+author: "Vojtěch Tóth, Tomáš Krupička, Yury Udavichenka"
 date: "2022-12-08"
 output:
   pdf_document: default
@@ -45,7 +45,8 @@ perished <- subset(case0201, Status=="Perished")$Humerus
 survived <- subset(case0201, Status=="Survived")$Humerus
 ```
 
-Ve skupině Uhynulých máme `r length(perished)` hodnot, ve skupině přeživších `r length(survived)`.
+Ve skupině Uhynulých máme `r length(perished)` hodnot, ve skupině
+přeživších `r length(survived)`.
 
 ```{r}
 str(perished)
@@ -104,9 +105,9 @@ $$\frac{m_i}{n\cdot h} =
 \frac{\text{počet hodnot uvnitř sloupce}}
     {\text{počet všech hodnot}\cdot\text{šířka sloupce}} $$ Funkce hist
 z daných hodnot zvládne odhadnout nejlepší šířku sloupce a rovnou
-histogram vykreslí. Aby histogram byl normalizovaný (součet výšek byl roven 1) 
-a nabýval obdobných hodnot jako hustota, musí být parametr `freq` nastaven 
-na `FALSE`.
+histogram vykreslí. Aby histogram byl normalizovaný (součet výšek byl
+roven 1) a nabýval obdobných hodnot jako hustota, musí být parametr
+`freq` nastaven na `FALSE`.
 
 ### Empirická distribuční funkce a histogram skupiny uhynulích
 
@@ -142,6 +143,34 @@ library(EnvStats, warn.conflicts=F, quietly=T)
 ```
 
 ### Normální rozdělení
+
+Normální rozdělení je takové rozdělení, !!!!TODO!!!!. Pro hustotu platí
+
+$$
+f_X(x) = \frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{(x - \mu)^2}{2\sigma^2}} \qquad \text{pro } x \in (-\infty, \infty)
+$$
+
+Hledáme tedy odhad parametrů $\mu$ a $\sigma$. Použijeme funkci enorm, u
+které zvolíme momentovou medotu a metodu maximální věrohodnosti. Získané
+parametry jsou prvky pole parameters, $\mu$ na indexu 1 a $\sigma$ na
+indexu 2.
+
+```{r results='hide'}
+norm_perished <- enorm(perished, method="mle/mme")$parameters
+norm_survived <- enorm(perished, method="mle/mme")$parameters
+mean_norm_per <- norm_perished[1]
+sd_per <- norm_perished[2]
+mean_norm_sur <- norm_survived[1]
+sd_sur <- norm_survived[2]
+
+```
+
+Výsledné odhady:
+
+|          |     Přeživší      |      Uhynulí      |
+|:---------|:-----------------:|:-----------------:|
+| $\mu$    | `r mean_norm_sur` | `r mean_norm_per` |
+| $\sigma$ |    `r sd_sur`     |    `r sd_per`     |
 
 ### Exponenciální rozdělení
 
@@ -216,7 +245,7 @@ lines(x, y, col="red", lwd=3)
 x <- survived
 curve(dexp(x, rate = lambda_sur), lwd= 3, col = "blue", add = TRUE)
 
-curve(dnorm(x, mean = mean_sur, sd = sqrt(var_sur)), col="green", add = TRUE, lwd=3)
+curve(dnorm(x, mean = mean_norm_sur, sd = sd_sur), col="green", add = TRUE, lwd=3)
 ```
 
 ```{r}
@@ -231,7 +260,7 @@ lines(x, y, col="red", lwd=3)
 x <- perished
 curve(dexp(x, rate = lambda_per), lwd= 3, col = "blue", add = TRUE)
 
-curve(dnorm(x, mean = mean_per, sd = sqrt(var_per)), col="green", add = TRUE, lwd=3)
+curve(dnorm(x, mean = mean_norm_per, sd = sd_per), col="green", add = TRUE, lwd=3)
 ```
 
 Z grafů vidíme, že žádný odhad neodpovídá přesně naším datům,
@@ -253,19 +282,20 @@ nejbližší rodzělení pro nás je normální.**
 > odhadnutými v předchozím bodě. Porovnejte histogram simulovaných
 > hodnot s pozorovanými daty.
 
-Pro vygenerování n náhodných hodnot při daném rozdělení využijeme opět balíčku 
-`EnvStats`. Zvolili jsme normální rozdělení, proto použijeme funkci `rnorm`. Jako
-parametry zadáme počet generovaných hodnot, už dříve odhadnutý výběrový průměr a 
-druhou odmocninu výběrového rozptylu (zde místo výběrové směrodatné odchylky).
+Pro vygenerování n náhodných hodnot při daném rozdělení využijeme opět
+balíčku `EnvStats`. Zvolili jsme normální rozdělení, proto použijeme
+funkci `rnorm`. Jako parametry zadáme počet generovaných hodnot, už
+dříve odhadnutý výběrový průměr a druhou odmocninu výběrového rozptylu
+(zde místo výběrové směrodatné odchylky).
 
 ```{r}
-data <- rnorm( 100, mean = mean_sur, sd=sqrt(var_sur))
+data <- rnorm( 100, mean = mean_norm_sur, sd=sd_sur)
 hist(survived, freq = FALSE, main = "Histogram skutečných a generovaných hodnot(survived)")
 hist(data, freq=FALSE, add=TRUE, col = rgb( 1, 0, 0, 0.4))
 ```
 
 ```{r}
-data <- rnorm( 100, mean = mean_per, sd=sqrt(var_per))
+data <- rnorm( 100, mean = mean_norm_per, sd=sd_per)
 hist(perished, freq = FALSE, main = "Histogram skutečných a generovaných hodnot (perished)")
 hist(data, freq=FALSE, add=TRUE, col = rgb( 0, 0, 1, 0.4))
 ```
